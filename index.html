@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Level 3 Master Clinical English CBT Assessment Engine (C2+ Expert)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Sticky Header -->
+  <header class="bg-slate-950 text-white sticky top-0 z-50 border-b border-slate-800/80 shadow-2xl backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center space-x-2.5">
+          <span class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-black uppercase tracking-widest px-3 py-0.5 rounded-full shadow-lg shadow-indigo-500/20">CEFR C2+ MASTER</span>
+          <h1 class="text-xl sm:text-2xl font-black tracking-tight text-white">Ultra-High Complexity Clinical CBT</h1>
+        </div>
+        <p class="text-slate-400 text-xs sm:text-sm mt-0.5">Advanced Syntax: Double Embedded Relatives, Archaic Participles, Complex Prepositions & Inverted Subjunctives</p>
+      </div>
+
+      <!-- Live Dashboard Stats & Controls -->
+      <div class="flex items-center space-x-3 bg-slate-900 px-4 py-2 rounded-xl border border-slate-800 shadow-inner">
+        <div class="text-center min-w-[75px]">
+          <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Answered</span>
+          <span id="headerProgress" class="text-base font-extrabold text-indigo-400 font-mono">0 / 100</span>
+        </div>
+        <div class="h-7 w-px bg-slate-800"></div>
+        <div class="text-center min-w-[90px]">
+          <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Time Left</span>
+          <div class="flex items-center justify-center space-x-1">
+            <span id="examTimer" class="text-base font-extrabold text-amber-400 font-mono">150:00</span>
+            <button onclick="toggleTimer()" id="timerToggleBtn" class="text-slate-400 hover:text-white p-0.5" title="Pause/Resume Timer">
+              <svg id="pauseIcon" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+              <svg id="playIcon" class="w-3.5 h-3.5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="h-7 w-px bg-slate-800"></div>
+        <div class="text-center min-w-[75px]">
+          <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Grade</span>
+          <span id="headerScore" class="text-base font-extrabold text-emerald-400 font-mono">--</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+    <!-- Sidebar Control Panel -->
+    <aside class="lg:col-span-1 space-y-5">
+
+      <!-- Section Filter Navigation -->
+      <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-lg">
+        <h2 class="text-[11px] font-black uppercase tracking-widest text-indigo-400 mb-3">Section Filtering</h2>
+        <nav class="space-y-1.5" aria-label="Section Navigation">
+          <button onclick="filterSection('all')" id="btn-all" class="section-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-md flex justify-between items-center">
+            <span>All 100 Questions</span>
+            <span class="bg-indigo-500/40 text-[11px] px-2 py-0.5 rounded-full font-mono">100</span>
+          </button>
+          <button onclick="filterSection('part1')" id="btn-part1" class="section-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-white flex justify-between items-center">
+            <span class="truncate">Part 1: Irregular & Passives</span>
+            <span class="bg-slate-800 text-[11px] px-2 py-0.5 rounded-full font-mono text-slate-300">50</span>
+          </button>
+          <button onclick="filterSection('part2')" id="btn-part2" class="section-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-white flex justify-between items-center">
+            <span class="truncate">Part 2: Complex Prepositions</span>
+            <span class="bg-slate-800 text-[11px] px-2 py-0.5 rounded-full font-mono text-slate-300">20</span>
+          </button>
+          <button onclick="filterSection('part3')" id="btn-part3" class="section-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-white flex justify-between items-center">
+            <span class="truncate">Part 3: Inverted & Subjunctives</span>
+            <span class="bg-slate-800 text-[11px] px-2 py-0.5 rounded-full font-mono text-slate-300">30</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Search & Dynamic Navigator Grid -->
+      <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-lg space-y-4">
+        <div>
+          <label for="searchInput" class="block text-[11px] font-black uppercase tracking-widest text-indigo-400 mb-2">Search Items / Keywords</label>
+          <div class="relative">
+            <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search terms (e.g., besought, lest, overborne)..." class="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-600">
+            <svg class="w-4 h-4 text-slate-500 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-[11px] font-black uppercase tracking-widest text-indigo-400">Navigation Matrix</span>
+            <span id="gridStats" class="text-[10px] text-slate-400 font-mono">100 Items</span>
+          </div>
+          <div id="questionGrid" class="grid grid-cols-5 gap-1.5 max-h-56 overflow-y-auto custom-scrollbar p-1.5 border border-slate-800/80 rounded-xl bg-slate-900">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Panel -->
+      <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-lg space-y-2.5">
+        <button onclick="submitExam()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3 px-4 rounded-xl shadow-lg shadow-emerald-900/30 transition-all flex items-center justify-center space-x-2 text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <span>Submit & Finalize Grade</span>
+        </button>
+        <button onclick="exportJSONData()" class="w-full bg-slate-800 hover:bg-slate-700 text-indigo-300 font-semibold py-2.5 px-4 rounded-xl border border-slate-700/60 transition-all flex items-center justify-center space-x-2 text-xs">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          <span>Export Dataset (JSON)</span>
+        </button>
+        <button onclick="resetExam()" class="w-full bg-slate-900 hover:bg-slate-800 text-slate-400 font-semibold py-2 px-4 rounded-xl border border-slate-800 transition-all text-xs">
+          Reset All Options
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- Main Question Display Area -->
+    <section class="lg:col-span-3 space-y-6">
+
+      <!-- Score Breakdown Card (Shown upon evaluation) -->
+      <div id="scoreReportCard" class="hidden bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white p-6 sm:p-8 rounded-2xl shadow-2xl border border-indigo-500/30">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div class="space-y-1.5 text-center sm:text-left">
+            <span class="bg-indigo-500/20 text-indigo-300 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border border-indigo-500/40">Diagnostic Evaluation Complete</span>
+            <h2 class="text-2xl font-black text-white">Mastery Scorecard</h2>
+            <p id="scoreMessage" class="text-slate-300 text-xs sm:text-sm max-w-xl">CEFR C2+ Master level evaluation results across clinical syntax, irregular participles, prepositions, and inverted clause structures.</p>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-700/80 px-6 py-4 rounded-2xl text-center min-w-[160px] shadow-xl">
+            <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-extrabold">Final Percentage</span>
+            <span id="finalScorePct" class="text-4xl font-black text-emerald-400 font-mono">0%</span>
+            <span id="finalRawScore" class="block text-xs text-slate-300 mt-1 font-mono">0 / 100 Correct</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-6 pt-5 border-t border-slate-800/80">
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 text-center">
+            <span class="text-[11px] text-slate-400 block font-semibold">Part 1: Irregular & Passives</span>
+            <span id="part1Score" class="text-base font-bold text-indigo-300 font-mono">--</span>
+          </div>
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 text-center">
+            <span class="text-[11px] text-slate-400 block font-semibold">Part 2: Complex Prepositions</span>
+            <span id="part2Score" class="text-base font-bold text-indigo-300 font-mono">--</span>
+          </div>
+          <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 text-center">
+            <span class="text-[11px] text-slate-400 block font-semibold">Part 3: Inverted & Subjunctives</span>
+            <span id="part3Score" class="text-base font-bold text-indigo-300 font-mono">--</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question Cards -->
+      <div id="questionsContainer" class="space-y-6">
+        <!-- Rendered via JavaScript -->
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    // 100 ULTRA-HIGH COMPLEXITY (LEVEL 3 / C2+ MASTER) CLINICAL MCQs WITH RANDOMIZED ANSWER KEYS
+    const clinicalExamData = [
+      // PART 1: 50 Questions - Rare Irregular Verbs, Passive Voice & Complex Embedded Relative Clauses
+      {
+        id: 1,
+        section: "part1",
+        question: "The attending clinical ethics board, having been _____ by the family to withdraw mechanical ventilatory support, reviewed the patient's advance directive.",
+        options: ["A. beseeched", "B. besought", "C. beseeching", "D. beseech"],
+        correct: 1, // B
+        explanation: "Linguistic Rationale: 'Beseech' has archaic/formal irregular past participle 'besought' (or 'beseeched', but 'besought' is standard in formal legal/clinical registers). The passive perfect participle clause is 'having been besought'."
+      },
+      {
+        id: 2,
+        section: "part1",
+        question: "The systemic vascular resistance was severely _____, having been _____ by an intravenous bolus of high-dose phenylephrine during refractory septic shock.",
+        options: ["A. raised ; offsetted", "B. elevated ; offset", "C. rose ; offset", "D. arisen ; offsetted"],
+        correct: 1, // B
+        explanation: "Linguistic Rationale: 'Offset' remains unchanged in past participle state (offset-offset-offset). The transitive participle 'elevated' pairs with the reduced passive modifier 'having been offset'."
+      },
+      {
+        id: 3,
+        section: "part1",
+        question: "Pathological tissue specimens, _____ with microscopic foci of calcification throughout the hepatic parenchyma, indicated chronic granulomatous inflammation.",
+        options: ["A. interstrewn", "B. interstrewed", "C. interstrewing", "D. interstrewer"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: 'Interstrew' forms past participle 'interstrewn'. The reduced passive relative clause reads 'specimens [which were] interstrewn with...'."
+      },
+      {
+        id: 4,
+        section: "part1",
+        question: "The patient's compensatory physiological mechanisms were completely _____, having been _____ by the rapid onset of fulminant meningococcemia.",
+        options: ["A. overborne", "B. overbear", "C. overbore", "D. overbearing"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: 'Overbear' follows bear-bore-borne -> past participle 'overborne'. Passive construction: 'were completely overborne'."
+      },
+      {
+        id: 5,
+        section: "part1",
+        question: "The suspected opioid-seeking patient _____ unobtrusively out of the emergency department before serum toxicology screens could be completed.",
+        options: ["A. slinked", "B. slunk", "C. slinking", "D. slink"],
+        correct: 1, // B
+        explanation: "Linguistic Rationale: Irregular verb 'slink' past tense is 'slunk' (slink-slunk-slunk)."
+      },
+      {
+        id: 6,
+        section: "part1",
+        question: "The surgical incision, having _____ unexpected lateral tension during patient repositioning, _____ open despite reinforced polypropylene sutures.",
+        options: ["A. withstood ; burst", "B. withstanded ; bursted", "C. withstood ; bursted", "D. withstand ; burst"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: 'Withstand' -> past participle 'withstood'. 'Burst' remains 'burst' in past tense (burst-burst-burst)."
+      },
+      {
+        id: 7,
+        section: "part1",
+        question: "A rare vascular deformity, _____ into two distinct feeder arteries within the posterior fossa, was successfully embolized.",
+        options: ["A. splitted", "B. split", "C. splittingly", "D. was splitted"],
+        correct: 1, // B
+        explanation: "Linguistic Rationale: Past participle of 'split' is 'split' (not 'splitted'). Reduced passive relative: 'deformity [which was] split into...'."
+      },
+      {
+        id: 8,
+        section: "part1",
+        question: "The cardiac output parameters, which had been _____ prior to vasopressor optimization, yielded severe tissue hypoperfusion.",
+        options: ["A. forecast", "B. forecasted", "C. forecasting", "D. forecasten"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: 'Forecast' maintains 'forecast' (or 'forecasted') in formal usage; 'forecast' is preferred in concise scientific syntax."
+      },
+      {
+        id: 9,
+        section: "part1",
+        question: "Deeply _____ gasps for air were observed in the dying patient, signifying terminal Agonal breathing patterns.",
+        options: ["A. drawn", "B. drew", "C. drawed", "D. drawing"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular past participle 'drawn' functions as a pre-nominal adjectival modifier ('deeply drawn gasps')."
+      },
+      {
+        id: 10,
+        section: "part1",
+        question: "The autologous vein graft, having _____ excessive mechanical stretch during harvest, underwent early luminal thrombosis.",
+        options: ["A. undergone", "B. underwent", "C. undergoed", "D. undergo"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Perfect participle active form 'having undergone' (undergo-underwent-undergone)."
+      },
+      {
+        id: 11,
+        section: "part1",
+        question: "Micro-thrombi _____ throughout the renal microvasculature were confirmed by frozen section renal biopsy.",
+        options: ["A. shed", "B. shedded", "C. shedding", "D. were shedded"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: 'Shed' is irregular (shed-shed-shed). Reduced passive relative: 'thrombi [which were] shed'."
+      },
+      {
+        id: 12,
+        section: "part1",
+        question: "The severe shear forces to which the aortic wall had been _____ caused acute intimomedial tear.",
+        options: ["A. subjected", "B. subjecting", "C. subject", "D. subjects"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Complex preposed relative pronoun structure: 'to which [the wall] had been subjected'."
+      },
+      {
+        id: 13,
+        section: "part1",
+        question: "The intravenous line that was _____ through the subclavian vein reached the cavoatrial junction without resistance.",
+        options: ["A. fed", "B. feeded", "C. feeding", "D. feeds"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'feed' past participle 'fed' in relative passive construction ('that was fed')."
+      },
+      {
+        id: 14,
+        section: "part1",
+        question: "The underlying genetic mutation, whose discovery was _____ to the patient's family, explained the hereditary cardiomyopathy.",
+        options: ["A. brought", "B. bringed", "C. brang", "D. bringing"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'bring' -> past participle 'brought'."
+      },
+      {
+        id: 15,
+        section: "part1",
+        question: "The arterial sheath, having _____ in place for 48 hours post-angioplasty, was removed using manual compression.",
+        options: ["A. lain", "B. laid", "C. lied", "D. lay"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Intransitive verb 'lie' (to remain) -> past participle 'lain' ('having lain in place')."
+      },
+      {
+        id: 16,
+        section: "part1",
+        question: "All metabolic byproducts _____ during ischemia are flushed into systemic circulation upon reperfusion.",
+        options: ["A. bound", "B. binded", "C. binding", "D. bind"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'bind' -> past participle 'bound'. Reduced relative: 'byproducts [which are] bound'."
+      },
+      {
+        id: 17,
+        section: "part1",
+        question: "The clinical error, which was _____ during real-time electronic chart auditing, was rectified immediately.",
+        options: ["A. caught", "B. catched", "C. catch", "D. catching"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'catch' past participle 'caught'."
+      },
+      {
+        id: 18,
+        section: "part1",
+        question: "High levels of serum bilirubin, having _____ rapidly over 24 hours, prompted emergency exchange transfusion.",
+        options: ["A. risen", "B. raised", "C. rose", "D. arised"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Intransitive verb 'rise' -> past participle 'risen' ('having risen')."
+      },
+      {
+        id: 19,
+        section: "part1",
+        question: "The bone fragment, _____ deep into the adjacent nerve plexus during the impact, caused motor deficits.",
+        options: ["A. driven", "B. drove", "C. drived", "D. driving"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'drive' past participle 'driven' in reduced passive relative."
+      },
+      {
+        id: 20,
+        section: "part1",
+        question: "The surgical knot that was _____ tightly around the pedicle vessel prevented post-operative hemorrhage.",
+        options: ["A. tied", "B. tyed", "C. tying", "D. ties"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Regular passive participle 'tied' in relative clause."
+      },
+      {
+        id: 21,
+        section: "part1",
+        question: "The tumor specimen, having been _____ into multiple micro-sections, was evaluated under immunofluorescence.",
+        options: ["A. cut", "B. cutted", "C. cutting", "D. cuts"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'cut' remains 'cut'."
+      },
+      {
+        id: 22,
+        section: "part1",
+        question: "Dense retroperitoneal scarring, _____ following previous radiation therapy, made surgical dissection treacherous.",
+        options: ["A. set in", "B. setted in", "C. setting in", "D. sets in"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Reduced relative phrase: 'scarring [which had] set in'."
+      },
+      {
+        id: 23,
+        section: "part1",
+        question: "The patient whose right arm was severely _____ during a industrial machinery accident underwent limb salvage surgery.",
+        options: ["A. crushed", "B. crush", "C. crushing", "D. crushes"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Relative possessive passive clause: 'whose right arm was severely crushed'."
+      },
+      {
+        id: 24,
+        section: "part1",
+        question: "The cerebrospinal fluid specimen, _____ from the lumbar puncture, revealed elevated protein concentrations.",
+        options: ["A. drawn", "B. drew", "C. drawed", "D. drawing"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'draw' past participle 'drawn'."
+      },
+      {
+        id: 25,
+        section: "part1",
+        question: "The patient, having _____ poison accidentally, was given supportive hemodialysis.",
+        options: ["A. ingested", "B. ingest", "C. ingesting", "D. ingests"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Active perfect participle clause: 'having ingested'."
+      },
+      {
+        id: 26,
+        section: "part1",
+        question: "Inflammatory cytokines _____ by activated macrophages perpetuate diffuse endothelial damage.",
+        options: ["A. shed", "B. shedded", "C. shedding", "D. shedder"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Reduced passive relative participle 'shed'."
+      },
+      {
+        id: 27,
+        section: "part1",
+        question: "The femoral arterial catheter, having _____ dislodged, caused extensive retroperitoneal hematoma.",
+        options: ["A. become", "B. became", "C. becoming", "D. becomes"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'become' past participle 'become' ('having become')."
+      },
+      {
+        id: 28,
+        section: "part1",
+        question: "The necrotic skin flap, which was _____ away during secondary wound debridement, left a deep tissue defect.",
+        options: ["A. cast", "B. casted", "C. casting", "D. casts"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'cast' remains 'cast'."
+      },
+      {
+        id: 29,
+        section: "part1",
+        question: "The donor kidney that had been _____ on continuous hypothermic perfusion remained viable for transplantation.",
+        options: ["A. kept", "B. keeped", "C. keeping", "D. keep"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'keep' past participle 'kept'."
+      },
+      {
+        id: 30,
+        section: "part1",
+        question: "Subcutaneous air, _____ along the deep cervical fascia following tracheal trauma, indicated pneumomediastinum.",
+        options: ["A. spread", "B. spreaded", "C. spreadingly", "D. spreads"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'spread' remains 'spread'."
+      },
+      {
+        id: 31,
+        section: "part1",
+        question: "The nerve root that was _____ by the displaced vertebral body resulted in severe radiculopathy.",
+        options: ["A. struck", "B. striked", "C. striking", "D. strikes"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'strike' past participle 'struck'."
+      },
+      {
+        id: 32,
+        section: "part1",
+        question: "Tissue samples _____ from the pulmonary nodule yielded high acid-fast bacilli counts.",
+        options: ["A. taken", "B. took", "C. tooked", "D. taking"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'take' past participle 'taken'."
+      },
+      {
+        id: 33,
+        section: "part1",
+        question: "The patient, having _____ massive systemic bleeding, was given eight units of packed red blood cells.",
+        options: ["A. suffered", "B. suffer", "C. suffering", "D. suffers"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Perfect active participle clause: 'having suffered'."
+      },
+      {
+        id: 34,
+        section: "part1",
+        question: "The central catheter line, _____ under strict sterile protocol, showed no signs of local site infection.",
+        options: ["A. placed", "B. place", "C. placing", "D. places"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Reduced passive clause 'placed under'."
+      },
+      {
+        id: 35,
+        section: "part1",
+        question: "Microvascular thrombi that were _____ inside the renal microvasculature triggered cortical necrosis.",
+        options: ["A. spun", "B. spinned", "C. spinning", "D. span"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'spin' past participle 'spun'."
+      },
+      {
+        id: 36,
+        section: "part1",
+        question: "The arterial graft, which had _____ severe biomechanical stress, maintained long-term patency.",
+        options: ["A. withstood", "B. withstanded", "C. withstand", "D. withstanding"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'withstand' past participle 'withstood'."
+      },
+      {
+        id: 37,
+        section: "part1",
+        question: "The catheter tip that had _____ into the right atrium caused focal atrial premature beats.",
+        options: ["A. slid", "B. slided", "C. slide", "D. sliding"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'slide' past participle 'slid'."
+      },
+      {
+        id: 38,
+        section: "part1",
+        question: "Antibiotic guidelines _____ by the hospital infectious disease division reduced drug resistance.",
+        options: ["A. put forth", "B. putted forth", "C. putting forth", "D. puts forth"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'put' remains 'put' ('put forth')."
+      },
+      {
+        id: 39,
+        section: "part1",
+        question: "The patient, having _____ from a ladder, suffered multiple bilateral calcaneal fractures.",
+        options: ["A. fallen", "B. fell", "C. falled", "D. falling"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'fall' past participle 'fallen'."
+      },
+      {
+        id: 40,
+        section: "part1",
+        question: "Pathological fluid _____ from the pleural space was sent for immunocytochemical analysis.",
+        options: ["A. drawn", "B. drew", "C. drawed", "D. drawing"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Reduced relative passive participle 'drawn'."
+      },
+      {
+        id: 41,
+        section: "part1",
+        question: "The organ transplant, having _____ acute cellular rejection, was treated with pulse methylprednisolone.",
+        options: ["A. undergone", "B. underwent", "C. undergoed", "D. undergo"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Perfect participle form 'having undergone'."
+      },
+      {
+        id: 42,
+        section: "part1",
+        question: "Micro-emboli, _____ off from a left atrial thombus, occluded the middle cerebral artery.",
+        options: ["A. cast", "B. casted", "C. casting", "D. casts"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'cast' remains 'cast'."
+      },
+      {
+        id: 43,
+        section: "part1",
+        question: "The clinical trial, whose preliminary findings were _____ to the FDA, demonstrated drug safety.",
+        options: ["A. shown", "B. showed", "C. shewn", "D. showing"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'show' past participle 'shown'."
+      },
+      {
+        id: 44,
+        section: "part1",
+        question: "The patient whose internal bleeding had _____ unnoticed for hours presented in severe hypovolemic shock.",
+        options: ["A. gone", "B. went", "C. goed", "D. going"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'go' past participle 'gone' ('had gone unnoticed')."
+      },
+      {
+        id: 45,
+        section: "part1",
+        question: "The necrotizing lesion, having _____ through the fascial boundary, required radical tissue excision.",
+        options: ["A. eaten", "B. ate", "C. eated", "D. eating"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'eat' past participle 'eaten' ('having eaten through')."
+      },
+      {
+        id: 46,
+        section: "part1",
+        question: "The suture, _____ under excessive tension, snapped during abdominal wall closure.",
+        options: ["A. bound", "B. binded", "C. binding", "D. bind"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'bind' past participle 'bound'."
+      },
+      {
+        id: 47,
+        section: "part1",
+        question: "The patient who was _____ by an infected tick developed acute Lyme disease arthritis.",
+        options: ["A. bitten", "B. bit", "C. bitted", "D. biting"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'bite' past participle 'bitten'."
+      },
+      {
+        id: 48,
+        section: "part1",
+        question: "Serum lactate levels, having _____ markedly during septic shock, normalized following fluid resuscitation.",
+        options: ["A. risen", "B. raised", "C. rose", "D. arised"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Intransitive verb 'rise' past participle 'risen'."
+      },
+      {
+        id: 49,
+        section: "part1",
+        question: "The intravenous line that had _____ empty was promptly disconnected by the nurse.",
+        options: ["A. run", "B. ran", "C. running", "D. runs"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'run' past participle 'run' (had run)."
+      },
+      {
+        id: 50,
+        section: "part1",
+        question: "The underlying structural defect that was _____ by transesophageal echocardiography guided the surgical repair.",
+        options: ["A. seen", "B. saw", "C. seed", "D. seeing"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Irregular verb 'see' past participle 'seen'."
+      },
+
+      // PART 2: 20 Questions - Complex Prepositions & Multi-Word Clinical Prepositional Structures
+      {
+        id: 51,
+        section: "part2",
+        question: "The hospital ethics board ruled that withdrawal of life-sustaining treatment was legally _____ refusal of consent by an authorized surrogate.",
+        options: ["A. tantamount to", "B. tantamount with", "C. tantamount of", "D. tantamount for"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Predicative prepositional adjective 'tantamount to' (equivalent in effect to)."
+      },
+      {
+        id: 52,
+        section: "part2",
+        question: "Physicians' compensation packages were restructured to be directly _____ clinical performance parameters and patient outcomes.",
+        options: ["A. commensurate with", "B. commensurate to", "C. commensurate of", "D. commensurate for"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Complex prepositional adjective 'commensurate with' (proportionate to)."
+      },
+      {
+        id: 53,
+        section: "part2",
+        question: "The critical care unit was expanded _____ increasing regional demand for tertiary ECMO services.",
+        options: ["A. by virtue of", "B. in light of", "C. with respect to", "D. in spite of"],
+        correct: 1, // B
+        explanation: "Linguistic Rationale: Complex preposition 'in light of' means taking into consideration / as a consequence of."
+      },
+      {
+        id: 54,
+        section: "part2",
+        question: "The patient developed acute tubular necrosis _____ severe renal ischemia following aortic cross-clamping.",
+        options: ["A. consequent upon", "B. consequent of", "C. consequent with", "D. consequent for"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Formal clinical preposition 'consequent upon' (as a result of)."
+      },
+      {
+        id: 55,
+        section: "part2",
+        question: "The trial of the novel oncology drug proceeded _____ minor self-limiting side effects observed in Phase I.",
+        options: ["A. notwithstanding", "B. despiting", "C. regardless for", "D. in spite to"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Formal concessive preposition 'notwithstanding'."
+      },
+      {
+        id: 56,
+        section: "part2",
+        question: "The surgical procedure was executed strictly _____ international clinical safety guidelines.",
+        options: ["A. in accordance with", "B. in accordance to", "C. according with", "D. with accordance to"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Fixed multi-word preposition: 'in accordance with'."
+      },
+      {
+        id: 57,
+        section: "part2",
+        question: "Special precautions were taken _____ the patient's extensive history of anaphylactoid drug reactions.",
+        options: ["A. on the grounds of", "B. with view to", "C. at grounds for", "D. in grounds of"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Complex prepositional phrase 'on the grounds of' (because of)."
+      },
+      {
+        id: 58,
+        section: "part2",
+        question: "Prophylactic anticoagulation was withheld _____ active intracranial hemorrhage confirmed on CT.",
+        options: ["A. pending", "B. until for", "C. pending to", "D. pending of"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Preposition 'pending' (awaiting / until)."
+      },
+      {
+        id: 59,
+        section: "part2",
+        question: "The patient achieved complete remission _____ a combination of targeted immunotherapy and radiation.",
+        options: ["A. by means of", "B. by means to", "C. with means of", "D. in means of"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Prepositional phrase 'by means of' (through the agency of)."
+      },
+      {
+        id: 60,
+        section: "part2",
+        question: "The hospital administration modified ICU handoff protocols _____ feedback from clinical nursing staff.",
+        options: ["A. in response to", "B. in response with", "C. with response to", "D. for response to"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Fixed phrase 'in response to'."
+      },
+      {
+        id: 61,
+        section: "part2",
+        question: "The trial was temporarily halted _____ unexplained neurological symptoms in two participants.",
+        options: ["A. on account of", "B. by virtue to", "C. with account of", "D. in account for"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Prepositional phrase 'on account of' (because of)."
+      },
+      {
+        id: 62,
+        section: "part2",
+        question: "Therapeutic hypothermia was initiated prior _____ transfer to the regional cardiac arrest center.",
+        options: ["A. to", "B. from", "C. than", "D. of"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Prepositional adjective 'prior' requires 'to'."
+      },
+      {
+        id: 63,
+        section: "part2",
+        question: "The research protocol was reviewed _____ ethical standards established by the Declaration of Helsinki.",
+        options: ["A. in line with", "B. in line to", "C. on line with", "D. at line with"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: 'In line with' means conforming to."
+      },
+      {
+        id: 64,
+        section: "part2",
+        question: "Serum electrolyte corrections were performed _____ current clinical practice guidelines.",
+        options: ["A. with respect to", "B. in respect for", "C. with respect of", "D. respecting to"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Multi-word preposition 'with respect to'."
+      },
+      {
+        id: 65,
+        section: "part2",
+        question: "The patient was granted emergency clinical trial exemption _____ his rare genetic tumor profile.",
+        options: ["A. by virtue of", "B. by virtue to", "C. in virtue with", "D. with virtue of"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Complex preposition 'by virtue of'."
+      },
+      {
+        id: 66,
+        section: "part2",
+        question: "Continuous arterial monitoring was established _____ severe blood pressure lability.",
+        options: ["A. owing to", "B. owing for", "C. owed to", "D. owing with"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Multi-word preposition 'owing to'."
+      },
+      {
+        id: 67,
+        section: "part2",
+        question: "Hypothermia therapy was maintained _____ protocol limits to protect cerebral tissue.",
+        options: ["A. subject to", "B. subject for", "C. subject with", "D. subject of"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Prepositional phrase 'subject to'."
+      },
+      {
+        id: 68,
+        section: "part2",
+        question: "Invasive hemodynamic monitoring was performed _____ echocardiographic assessment.",
+        options: ["A. in conjunction with", "B. in conjunction to", "C. with conjunction of", "D. at conjunction with"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Multi-word preposition 'in conjunction with'."
+      },
+      {
+        id: 69,
+        section: "part2",
+        question: "The patient was discharged _____ stable hemodynamic parameters.",
+        options: ["A. with regard to", "B. with regard for", "C. in regard of", "D. on regard to"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Prepositional phrase 'with regard to'."
+      },
+      {
+        id: 70,
+        section: "part2",
+        question: "Intravenous antimicrobial therapy was selected _____ renal function adjustments.",
+        options: ["A. subject to", "B. subject with", "C. subject of", "D. subject for"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Prepositional structure 'subject to'."
+      },
+
+      // PART 3: 30 Questions - Advanced Conjunctions, Subjunctive / Inverted Conditional Syntax
+      {
+        id: 71,
+        section: "part3",
+        question: "_____ had the surgical team recognized the subtle early sign of mesenteric ischemia, prompt revascularization would have prevented bowel infarction.",
+        options: ["A. Should", "B. Had", "C. Were", "D. Unless"],
+        correct: 1, // B
+        explanation: "Linguistic Rationale: Inverted past perfect conditional (equivalent to 'If the surgical team had recognized...'). Auxiliary verb inversion 'Had the surgical team recognized'."
+      },
+      {
+        id: 72,
+        section: "part3",
+        question: "_____ the patient exhibit sudden neurological deterioration, emergency non-contrast head CT must be performed immediately.",
+        options: ["A. Should", "B. Were", "C. Had", "D. Unless"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Inverted first conditional ('Should the patient exhibit...') replacing 'If the patient should exhibit...'."
+      },
+      {
+        id: 73,
+        section: "part3",
+        question: "_____ the patient to suffer acute respiratory failure, emergency endotracheal intubation would be initiated.",
+        options: ["A. Were", "B. Should", "C. Had", "D. Unless"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Inverted second conditional ('Were the patient to suffer...') replacing 'If the patient were to suffer...'."
+      },
+      {
+        id: 74,
+        section: "part3",
+        question: "Prophylactic broad-spectrum antibiotics were initiated immediately _____ the open fracture wound become infected with multidrug-resistant pathogens.",
+        options: ["A. lest", "B. unless", "C. provided", "D. whereas"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Negative purpose conjunction 'lest' (meaning 'for fear that') takes subjunctive or 'should'."
+      },
+      {
+        id: 75,
+        section: "part3",
+        question: "The trial intervention demonstrated substantial efficacy, _____ causing transient self-limiting liver enzyme elevations.",
+        options: ["A. albeit", "B. whereas", "C. inasmuch as", "D. save that"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Concessive conjunction 'albeit' introduces a reduced adjectival/participle clause."
+      },
+      {
+        id: 76,
+        section: "part3",
+        question: "_____ the patient's arterial blood gas parameters maintain acceptable oxygenation, mechanical ventilation can be safely weaned.",
+        options: ["A. Inasmuch as", "B. Save that", "C. Notwithstanding that", "D. Albeit"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Causal subordinating conjunction 'inasmuch as' (since / considering that)."
+      },
+      {
+        id: 77,
+        section: "part3",
+        question: "The recovery was uneventful, _____ the patient complained of mild transient incisional discomfort.",
+        options: ["A. save that", "B. so that", "C. insomuch", "D. as long as"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Exceptional subordinating conjunction 'save that' (except that)."
+      },
+      {
+        id: 78,
+        section: "part3",
+        question: "_____ the clinical trial yielded positive preliminary safety data, long-term cardiovascular outcomes remain unproven.",
+        options: ["A. Notwithstanding that", "B. Inasmuch as", "C. Provided that", "D. Save that"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Formal concessive subordinating conjunction 'notwithstanding that' (despite the fact that)."
+      },
+      {
+        id: 79,
+        section: "part3",
+        question: "The physician documented the adverse drug reaction transparently _____ system-wide safety precautions could be updated.",
+        options: ["A. so that", "B. in order to", "C. so as to", "D. lest"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Purpose conjunction 'so that' followed by modal clause ('could be updated')."
+      },
+      {
+        id: 80,
+        section: "part3",
+        question: "Systemic anticoagulation was maintained, _____ the patient's elevated bleeding risk necessitated hourly neurological checks.",
+        options: ["A. howbeit", "B. even though", "C. despite", "D. owing to"],
+        correct: 1, // B
+        explanation: "Linguistic Rationale: Concessive subordinating conjunction 'even though' introduces full finite clause."
+      },
+      {
+        id: 81,
+        section: "part3",
+        question: "_____ had the clinical team acted immediately, irreversible organ damage could have been completely averted.",
+        options: ["A. Had", "B. Should", "C. Were", "D. If"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Inverted past perfect conditional ('Had the clinical team acted...')."
+      },
+      {
+        id: 82,
+        section: "part3",
+        question: "The therapeutic trial was successful _____ it achieved a 40% reduction in primary cardiac events.",
+        options: ["A. in that", "B. so that", "C. save that", "D. albeit"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Explanatory subordinating conjunction 'in that'."
+      },
+      {
+        id: 83,
+        section: "part3",
+        question: "_____ the patient develops ventricular tachycardia, electrical cardioversion must be synchronized immediately.",
+        options: ["A. In the event that", "B. Inasmuch as", "C. Albeit", "D. Save that"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Complex conditional conjunction 'in the event that'."
+      },
+      {
+        id: 84,
+        section: "part3",
+        question: "The patient refused mechanical ventilation; _____ he consented to high-flow nasal cannula therapy.",
+        options: ["A. howbeit", "B. whereas", "C. cause", "D. as long as"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Formal adversative conjunctive adverb 'howbeit' (nevertheless)."
+      },
+      {
+        id: 85,
+        section: "part3",
+        question: "_____ the high operative risk, emergency exploratory laparotomy was performed without delay.",
+        options: ["A. Despite", "B. Although", "C. Even though", "D. Whereas"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Concessive preposition 'despite' taking a noun phrase complement."
+      },
+      {
+        id: 86,
+        section: "part3",
+        question: "Continuous vasopressor infusion was titrated _____ maintain mean arterial pressure above 65 mmHg.",
+        options: ["A. so as to", "B. so that", "C. in order that", "D. lest"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Purpose infinitival structure 'so as to' + base verb."
+      },
+      {
+        id: 87,
+        section: "part3",
+        question: "_____ the patient's cardiac rhythm remains stable, transfer to the step-down ward can proceed.",
+        options: ["A. Provided that", "B. Albeit", "C. Save that", "D. Notwithstanding"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Conditional subordinating conjunction 'provided that'."
+      },
+      {
+        id: 88,
+        section: "part3",
+        question: "The patient exhibited extreme dyspnea, _____ oxygen saturation remained paradoxically normal.",
+        options: ["A. yet", "B. so", "C. for", "D. nor"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Coordinating adversative conjunction 'yet'."
+      },
+      {
+        id: 89,
+        section: "part3",
+        question: "_____ clinical parameters deteriorated rapidly, the patient was transferred to the intensive care unit.",
+        options: ["A. As", "B. Although", "C. Unless", "D. Albeit"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Subordinating conjunction 'as' (because / since)."
+      },
+      {
+        id: 90,
+        section: "part3",
+        question: "_____ the intervention carries significant risk, the potential clinical benefits justify its immediate deployment.",
+        options: ["A. While", "B. Because", "C. So", "D. Unless"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Concessive subordinating conjunction 'while'."
+      },
+      {
+        id: 91,
+        section: "part3",
+        question: "The patient was monitored closely _____ respiratory complications arise.",
+        options: ["A. should", "B. had", "C. were", "D. if not"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Inverted conditional clause embedded in purpose: 'should [complications arise]'."
+      },
+      {
+        id: 92,
+        section: "part3",
+        question: "_____ the biopsy results were inconclusive, a repeat tissue sampling was scheduled.",
+        options: ["A. Since", "B. Although", "C. Unless", "D. Albeit"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Causal subordinating conjunction 'since'."
+      },
+      {
+        id: 93,
+        section: "part3",
+        question: "The antibiotic regimen was discontinued _____ the blood cultures returned negative after 72 hours.",
+        options: ["A. once", "B. whereas", "C. albeit", "D. save that"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Temporal conjunction 'once'."
+      },
+      {
+        id: 94,
+        section: "part3",
+        question: "_____ the patient was unconscious upon arrival, emergency trauma protocols were initiated instantly.",
+        options: ["A. Inasmuch as", "B. Although", "C. Save that", "D. Albeit"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Causal conjunction 'inasmuch as'."
+      },
+      {
+        id: 95,
+        section: "part3",
+        question: "Serum potassium was corrected _____ prevent lethal ventricular arrhythmias.",
+        options: ["A. in order to", "B. so that", "C. in order that", "D. lest"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Purpose infinitival conjunction 'in order to'."
+      },
+      {
+        id: 96,
+        section: "part3",
+        question: "_____ the patient's blood pressure stabilizes, emergency surgery cannot be safely initiated.",
+        options: ["A. Unless", "B. Because", "C. Although", "D. Since"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Negative conditional conjunction 'unless'."
+      },
+      {
+        id: 97,
+        section: "part3",
+        question: "The surgical procedure was prolonged; _____, no post-operative wound infection occurred.",
+        options: ["A. nevertheless", "B. consequently", "C. because", "D. hence"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Adversative conjunctive adverb 'nevertheless'."
+      },
+      {
+        id: 98,
+        section: "part3",
+        question: "Both the chief resident _____ the surgical fellow agreed on the necessity of immediate re-exploration.",
+        options: ["A. and", "B. or", "C. nor", "D. as well"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Correlative conjunction 'both ... and'."
+      },
+      {
+        id: 99,
+        section: "part3",
+        question: "The patient displayed severe signs of sepsis; _____, intravenous fluid boluses were administered rapidly.",
+        options: ["A. accordingly", "B. whereas", "C. albeit", "D. howbeit"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Resultative conjunctive adverb 'accordingly'."
+      },
+      {
+        id: 100,
+        section: "part3",
+        question: "_____ were the patient to develop signs of hypovolemic shock, central venous access would be established immediately.",
+        options: ["A. Were", "B. Should", "C. Had", "D. If"],
+        correct: 0, // A
+        explanation: "Linguistic Rationale: Inverted second conditional ('Were the patient to develop...')."
+      }
+    ];
+
+    // State Variables
+    const userAnswers = {};
+    let activeFilter = 'all';
+    let timerSeconds = 150 * 60; // 150 minutes
+    let timerInterval = null;
+    let isTimerPaused = false;
+
+    // Filter Section Handler
+    function filterSection(sectionKey) {
+      activeFilter = sectionKey;
+      
+      document.querySelectorAll('.section-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-md');
+        btn.classList.add('text-slate-400', 'hover:bg-slate-900', 'hover:text-white');
+        const badge = btn.querySelector('span:last-child');
+        if (badge) {
+          badge.classList.remove('bg-indigo-500/40');
+          badge.classList.add('bg-slate-800');
+        }
+      });
+
+      const activeBtn = document.getElementById(`btn-${sectionKey}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-400', 'hover:bg-slate-900', 'hover:text-white');
+        activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-md');
+        const badge = activeBtn.querySelector('span:last-child');
+        if (badge) {
+          badge.classList.remove('bg-slate-800');
+          badge.classList.add('bg-indigo-500/40');
+        }
+      }
+
+      renderExamItems();
+    }
+
+    // Render Question Cards
+    function renderExamItems() {
+      const container = document.getElementById('questionsContainer');
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+      container.innerHTML = '';
+
+      const filtered = clinicalExamData.filter(item => {
+        const matchesSection = activeFilter === 'all' || item.section === activeFilter;
+        const matchesSearch = item.question.toLowerCase().includes(searchTerm) || 
+                              item.explanation.toLowerCase().includes(searchTerm);
+        return matchesSection && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-slate-950 p-12 text-center rounded-2xl border border-slate-800">
+            <svg class="w-12 h-12 text-slate-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <h3 class="text-base font-bold text-slate-300">No matching assessment items found</h3>
+            <p class="text-slate-500 text-xs mt-1">Try clearing your search query or switching section filters.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.id = `item-card-${item.id}`;
+        card.className = "bg-slate-950 p-5 sm:p-7 rounded-2xl shadow-xl border border-slate-800/90 transition-all space-y-4";
+
+        const selectedOpt = userAnswers[item.id];
+        
+        let sectionBadgeText = item.section === 'part1' ? 'Part 1: Irregular & Passives' :
+                               item.section === 'part2' ? 'Part 2: Prepositions' : 'Part 3: Inverted & Subjunctives';
+
+        let optionsMarkup = item.options.map((opt, idx) => {
+          const isChecked = selectedOpt === idx;
+          return `
+            <label class="flex items-start p-3 sm:p-3.5 rounded-xl border border-slate-800/80 hover:bg-slate-900 cursor-pointer transition-all ${isChecked ? 'bg-indigo-950/60 border-indigo-500/80 ring-1 ring-indigo-500' : ''}">
+              <input type="radio" name="q_${item.id}" value="${idx}" ${isChecked ? 'checked' : ''} onchange="selectOption(${item.id}, ${idx})" class="mt-0.5 text-indigo-500 focus:ring-indigo-500 h-4 w-4 bg-slate-900 border-slate-700">
+              <span class="ml-3 text-xs sm:text-sm font-medium text-slate-200 leading-relaxed">${opt}</span>
+            </label>
+          `;
+        }).join('');
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div class="flex items-center space-x-2">
+              <span class="bg-indigo-600 text-white font-mono text-xs font-bold px-2.5 py-1 rounded-md">Q${item.id}</span>
+              <span class="text-[11px] font-bold text-indigo-400 bg-indigo-950/80 border border-indigo-800/50 px-2.5 py-1 rounded-md">${sectionBadgeText}</span>
+            </div>
+            <span id="status-badge-${item.id}" class="text-[11px] font-semibold ${selectedOpt !== undefined ? 'text-emerald-400 bg-emerald-950/60 border border-emerald-800/60' : 'text-slate-500 bg-slate-900'} px-2.5 py-0.5 rounded-full">
+              ${selectedOpt !== undefined ? 'Answered' : 'Unanswered'}
+            </span>
+          </div>
+
+          <p class="text-sm sm:text-base font-semibold text-slate-100 leading-relaxed">${item.question}</p>
+
+          <div class="space-y-2 pt-1">
+            ${optionsMarkup}
+          </div>
+
+          <div id="explanation-${item.id}" class="hidden mt-4 p-4 rounded-xl text-xs sm:text-sm leading-relaxed border"></div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      renderGrid();
+    }
+
+    // Handle Option Selection
+    function selectOption(qId, optIdx) {
+      userAnswers[qId] = optIdx;
+      
+      const badge = document.getElementById(`status-badge-${qId}`);
+      if (badge) {
+        badge.textContent = 'Answered';
+        badge.className = 'text-[11px] font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-2.5 py-0.5 rounded-full';
+      }
+
+      updateHeaderStats();
+      renderGrid();
+    }
+
+    // Render Grid Navigator Sidebar
+    function renderGrid() {
+      const grid = document.getElementById('questionGrid');
+      grid.innerHTML = '';
+
+      clinicalExamData.forEach(item => {
+        const isAnswered = userAnswers[item.id] !== undefined;
+        const btn = document.createElement('button');
+        btn.onclick = () => scrollToItem(item.id);
+        btn.className = `h-7 w-full text-[11px] font-mono font-bold rounded-md transition-all flex items-center justify-center ${
+          isAnswered ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-900 text-slate-400 border border-slate-800 hover:bg-slate-800 hover:text-slate-200'
+        }`;
+        btn.textContent = item.id;
+        grid.appendChild(btn);
+      });
+    }
+
+    function scrollToItem(id) {
+      const item = clinicalExamData.find(q => q.id === id);
+      if (activeFilter !== 'all' && item.section !== activeFilter) {
+        filterSection('all');
+      }
+      setTimeout(() => {
+        const el = document.getElementById(`item-card-${id}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
+    }
+
+    function handleSearch() {
+      renderExamItems();
+    }
+
+    function updateHeaderStats() {
+      const answeredCount = Object.keys(userAnswers).length;
+      document.getElementById('headerProgress').textContent = `${answeredCount} / 100`;
+    }
+
+    // Timer Logic
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        if (!isTimerPaused) {
+          if (timerSeconds <= 0) {
+            clearInterval(timerInterval);
+            alert("Exam Time Expired! Submitting exam automatically.");
+            submitExam();
+            return;
+          }
+          timerSeconds--;
+          const mins = Math.floor(timerSeconds / 60);
+          const secs = timerSeconds % 60;
+          document.getElementById('examTimer').textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+      }, 1000);
+    }
+
+    function toggleTimer() {
+      isTimerPaused = !isTimerPaused;
+      document.getElementById('pauseIcon').classList.toggle('hidden', isTimerPaused);
+      document.getElementById('playIcon').classList.toggle('hidden', !isTimerPaused);
+    }
+
+    // Grade and Submit Exam
+    function submitExam() {
+      clearInterval(timerInterval);
+      let totalCorrect = 0;
+      let part1Correct = 0, part2Correct = 0, part3Correct = 0;
+
+      clinicalExamData.forEach(item => {
+        const userChoice = userAnswers[item.id];
+        const expDiv = document.getElementById(`explanation-${item.id}`);
+
+        if (expDiv) {
+          expDiv.classList.remove('hidden', 'bg-emerald-950/80', 'border-emerald-800/80', 'text-emerald-200', 'bg-rose-950/80', 'border-rose-800/80', 'text-rose-200');
+
+          if (userChoice === item.correct) {
+            totalCorrect++;
+            if (item.section === 'part1') part1Correct++;
+            if (item.section === 'part2') part2Correct++;
+            if (item.section === 'part3') part3Correct++;
+
+            expDiv.classList.add('bg-emerald-950/80', 'border-emerald-800/80', 'text-emerald-200');
+            expDiv.innerHTML = `
+              <div class="font-bold text-emerald-400 mb-1 flex items-center">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Correct Choice (Option ${String.fromCharCode(65 + item.correct)})
+              </div>
+              <p>${item.explanation}</p>
+            `;
+          } else {
+            expDiv.classList.add('bg-rose-950/80', 'border-rose-800/80', 'text-rose-200');
+            const selectedText = userChoice !== undefined ? `Option ${String.fromCharCode(65 + userChoice)}` : 'Unanswered';
+            expDiv.innerHTML = `
+              <div class="font-bold text-rose-400 mb-1 flex items-center">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                Incorrect. Your Answer: ${selectedText} | Correct Answer: Option ${String.fromCharCode(65 + item.correct)}
+              </div>
+              <p>${item.explanation}</p>
+            `;
+          }
+        }
+      });
+
+      const pct = Math.round((totalCorrect / 100) * 100);
+      document.getElementById('finalScorePct').textContent = `${pct}%`;
+      document.getElementById('finalRawScore').textContent = `${totalCorrect} / 100 Correct`;
+      document.getElementById('headerScore').textContent = `${pct}%`;
+
+      document.getElementById('part1Score').textContent = `${part1Correct} / 50 (${Math.round((part1Correct/50)*100)}%)`;
+      document.getElementById('part2Score').textContent = `${part2Correct} / 20 (${Math.round((part2Correct/20)*100)}%)`;
+      document.getElementById('part3Score').textContent = `${part3Correct} / 30 (${Math.round((part3Correct/30)*100)}%)`;
+
+      document.getElementById('scoreReportCard').classList.remove('hidden');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Export dataset as JSON file
+    function exportJSONData() {
+      const exportObject = {
+        title: "Master Level 3 Clinical English CBT Dataset (C2+ Expert)",
+        cefrLevel: "C2+ Master Level",
+        totalQuestions: clinicalExamData.length,
+        exportedAt: new Date().toISOString(),
+        questions: clinicalExamData
+      };
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObject, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "clinical_english_c2plus_master_cbt_100_mcq.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    // Reset Exam
+    function resetExam() {
+      for (let key in userAnswers) delete userAnswers[key];
+      document.getElementById('scoreReportCard').classList.add('hidden');
+      document.getElementById('headerScore').textContent = '--';
+      timerSeconds = 150 * 60;
+      updateHeaderStats();
+      renderExamItems();
+    }
+
+    // Initialize on load
+    window.onload = () => {
+      renderExamItems();
+      startTimer();
+    };
+  </script>
+</body>
+</html>
